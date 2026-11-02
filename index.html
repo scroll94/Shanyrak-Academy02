@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Шаңырақ Code</title>
+<meta name="description" content="Онлайн-школа ИИ и программирования для подростков 14–18 лет: игры, Roblox, чат-боты, 3D-сайты, приложения, 3D-модели и честная работа с ИИ.">
+<meta name="theme-color" content="#f3f2ee">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230f1a3c'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23fec50c' stroke-width='5'/%3E%3Cpath d='M15 26Q32 14 49 26M15 38Q32 50 49 38M26 15Q14 32 26 49M38 15Q50 32 38 49' fill='none' stroke='%23fec50c' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@800&family=Golos+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* цвета взяты у самой юрты и флага: войлок, небо флага, золото шаңырақа, ночь степи, красный текемет */
+  --paper: #f3f2ee;
+  --night: #0f1a3c;
+  --sky: #00afca;
+  --gold: #fec50c;
+  --red: #c4291f;
+  --gold-soft: #5a3d00;
+  --sky-soft: #0c3a4a;
+  --paper-soft: #4a4336;
+  --night-soft: #c9cfe0;
+  --accent: var(--red);
+  --accent-ink: #ffffff;
+
+  --display: 'Geologica', 'Arial Black', sans-serif;
+  --text: 'Golos Text', system-ui, sans-serif;
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --step-poster: clamp(2.5rem, 5.2vw, 5.25rem);
+
+  --m: clamp(16px, 2vw, 28px);
+  --gap: 8px;
+  --radius: 4px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-io: cubic-bezier(0.77, 0, 0.175, 1);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scrollbar-color: var(--night) var(--paper); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--night);
+  font: 400 var(--step-body)/1.5 var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+img, canvas, svg { display: block; max-width: 100%; }
+a { color: inherit; text-underline-offset: 0.18em; text-decoration-thickness: 2px; }
+::selection { background: var(--gold); color: var(--night); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.on-gold :focus-visible, .on-paper :focus-visible { outline-color: var(--night); }
+[hidden] { display: none !important; }
+h1, h2, h3, p { margin: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.display { font-family: var(--display); font-weight: 800; letter-spacing: -0.04em; line-height: 0.9; text-transform: uppercase; text-wrap: balance; }
+
+/* одна форма кнопки на всю страницу */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6em;
+  min-height: 48px; padding: 0 1.25em;
+  border: 0; border-radius: var(--radius);
+  background: var(--accent); color: var(--accent-ink);
+  font: 600 var(--step-body)/1.1 var(--text);
+  text-decoration: none; cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .btn:hover { background: #a3201a; } }
+.btn--night { background: var(--night); color: var(--paper); }
+@media (hover: hover) and (pointer: fine) { .btn--night:hover { background: #1d2c5e; } }
+.btn svg { width: 1.1em; height: 1.1em; transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .btn:hover svg { transform: translateX(3px); } }
+
+/* маска для подъёма строк */
+.ln { display: block; overflow: clip; padding-top: 0.08em; margin-top: -0.08em; }
+.ln > span { display: block; }
+
+/* ---------- 1. Шапка: войлок сверху, небо снизу, шов режет вторую строку ---------- */
+.hero {
+  --seam: 50%;
+  --hl: clamp(72px, 9vw, 140px);
+  position: relative;
+  height: 100svh; min-height: 560px;
+  background: var(--sky);
+  overflow: clip;
+}
+.hero__top { position: absolute; inset: 0 0 auto; height: var(--seam); background: var(--paper); }
+.hero__bar {
+  position: absolute; inset: 0 0 auto; z-index: 3;
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+  padding: 28px var(--m) 0;
+}
+.wordmark { display: inline-flex; align-items: center; gap: 10px; font: 800 var(--step-lead)/1 var(--display); letter-spacing: -0.03em; text-decoration: none; }
+.wordmark svg { width: 34px; height: 34px; }
+.hero__crown {
+  position: absolute; left: 0; right: 0; top: 84px;
+  bottom: calc(100% - var(--seam) + var(--hl) * 0.86 * 1.5 + 12px);
+  z-index: 1;
+}
+.hero__crown canvas { width: 100%; height: 100%; }
+.hero__crown .crown-fallback { width: auto; height: 100%; margin: 0 auto; }
+.hl {
+  position: absolute; left: 0; right: 0; top: var(--seam); z-index: 2;
+  transform: translateY(-75%);
+  font-size: var(--hl); line-height: 0.86; text-align: center;
+  margin: 0;
+}
+.hl__copy { display: block; }
+.hl__copy--top { color: var(--red); clip-path: inset(0 0 25% 0); }
+.hl__copy--bot { position: absolute; inset: 0; color: var(--night); clip-path: inset(75% 0 0 0); }
+.hero__lead {
+  position: absolute; left: 50%; bottom: 40px; z-index: 2;
+  width: min(44rem, calc(100% - 2 * var(--m)));
+  transform: translateX(-50%);
+  font-size: var(--step-lead); line-height: 1.35; text-align: center; color: var(--night);
+}
+
+/* ---------- 2. Направления: список размером с афишу ---------- */
+.chapter { position: relative; min-height: 90svh; padding: 18vh var(--m); }
+.on-gold { background: var(--gold); color: var(--night); }
+.on-night { background: var(--night); color: var(--paper); }
+.on-sky { background: var(--sky); color: var(--night); }
+.on-paper { background: var(--paper); color: var(--night); }
+.on-red { background: var(--red); color: var(--paper); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; }
+
+.dirs { list-style: none; margin: 0; padding: 0; }
+.dir { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; align-items: baseline; margin-bottom: 0.35em; }
+.dir__name { grid-column: 1 / 9; font: 800 var(--step-poster)/1 var(--display); letter-spacing: -0.04em; transition: color 220ms ease; }
+.dir__text { grid-column: 9 / 13; font-size: var(--step-body); line-height: 1.45; }
+.dir--head .dir__name { color: var(--gold-soft); }
+@media (hover: hover) and (pointer: fine) {
+  .dirs:hover .dir:not(.dir--head) .dir__name { color: var(--gold-soft); }
+  .dirs .dir:not(.dir--head):hover .dir__name { color: var(--night); }
+}
+.dir__name svg { display: inline-block; width: 0.62em; height: 0.62em; margin-left: 0.18em; vertical-align: 0.02em; opacity: 0; transform: rotate(-30deg) scale(0.9); transition: opacity 220ms ease, transform 320ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .dir:hover .dir__name svg { opacity: 1; transform: none; } }
+
+/* ---------- 3. Собери юрту: живая вещь ---------- */
+.yurt { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; align-items: center; padding-top: 12vh; padding-bottom: 12vh; }
+.yurt__copy { grid-column: 1 / 6; }
+.yurt__copy h2 { font-size: var(--step-head); }
+.yurt__copy > p { margin-top: 28px; max-width: 34rem; color: var(--night-soft); font-size: var(--step-lead); line-height: 1.4; }
+.parts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); margin-top: 40px; }
+.part {
+  min-height: 64px; padding: 12px 16px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  border: 2px solid rgba(244, 238, 226, 0.35); border-radius: var(--radius);
+  background: transparent; color: var(--paper);
+  font: 800 var(--step-lead)/1 var(--display); letter-spacing: -0.03em; text-align: left;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+.part small { font: 400 var(--step-small)/1.2 var(--text); letter-spacing: 0; margin-top: 6px; color: var(--night-soft); transition: color 220ms ease; }
+.part:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .part:hover { border-color: var(--gold); } }
+.part[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--night); }
+.part[aria-pressed="true"] small { color: var(--gold-soft); }
+.yurt__note { margin-top: 28px; min-height: 7.5em; max-width: 34rem; }
+.yurt__note h3 { font: 600 var(--step-lead)/1.2 var(--text); color: var(--gold); }
+.yurt__note p { margin-top: 10px; }
+.js .yurt__note .note { display: none; }
+.js .yurt__note .note.is-on { display: block; transition: opacity 220ms ease, transform 280ms var(--ease-out); }
+@starting-style { .js .yurt__note .note.is-on { opacity: 0; transform: translateY(8px); } }
+.no-js-list .note + .note { margin-top: 20px; }
+.yurt__stage { grid-column: 6 / 13; position: relative; height: min(78vh, 720px); }
+.yurt__stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.yurt__stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+.yurt__stage.is-3d img { display: none; }
+
+/* ---------- 4. Беркут: одна картина по плиткам ---------- */
+.board-wrap { padding: 12vh var(--m); }
+.board { container-type: inline-size; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap); }
+.tile { position: relative; aspect-ratio: 1; overflow: clip; border-radius: var(--radius); }
+.tile--pic .piece {
+  position: absolute; inset: 0;
+  background-image: url(assets/sb-kazakh-man-on-horse-with-golden.jpg);
+  background-size: cover; background-position: center;
+  transition: transform 500ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) { .tile--pic:hover .piece { transform: scale(1.08); } }
+.tile--c { padding: 1.2cqw; display: flex; flex-direction: column; justify-content: space-between; }
+.tile--c p { font-size: max(0.8125rem, 1.35cqw); line-height: 1.3; font-weight: 600; }
+.tile--head h2 { font-size: 2.5cqw; line-height: 0.92; }
+.t-head p { font-weight: 400; }
+.tile--act { text-decoration: none; transition: background-color 220ms ease; }
+@media (hover: hover) and (pointer: fine) { .tile--act:hover { background: #a3201a; } }
+.tile--act:active { transform: scale(0.98); }
+.tile--act svg { width: 3.6cqw; height: 3.6cqw; align-self: flex-end; transition: transform 260ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .tile--act:hover svg { transform: translate(4px, -4px); } }
+.tile .big { font: 800 3.3cqw/0.9 var(--display); letter-spacing: -0.04em; }
+.board-cap { margin-top: 16px; font-size: var(--step-small); color: var(--paper-soft); }
+/* место цветных плиток на доске 6×4 */
+.t-head { grid-area: 1 / 1; }
+.t-f1 { grid-area: 2 / 5; }
+.t-f2 { grid-area: 3 / 2; }
+.t-f3 { grid-area: 4 / 4; }
+.t-act { grid-area: 3 / 6; }
+
+/* ---------- 5. Путь: плитки растут ---------- */
+.path { padding-top: 14vh; padding-bottom: 14vh; }
+.steps { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 10px; row-gap: 0; align-items: end; position: relative; }
+.steps h2 { grid-column: 1 / 6; grid-row: 1; align-self: start; font-size: var(--step-head); }
+.step { grid-row: 1; display: flex; flex-direction: column; }
+.step:nth-of-type(1) { grid-column: 1 / 3; }
+.step:nth-of-type(2) { grid-column: 3 / 6; }
+.step:nth-of-type(3) { grid-column: 6 / 9; }
+.step:nth-of-type(4) { grid-column: 9 / 13; }
+.step__tile { padding: 10px; border-radius: var(--radius); overflow: clip; }
+.step:nth-of-type(1) .step__tile { height: 30vh; background: var(--paper); }
+.step:nth-of-type(2) .step__tile { height: 42vh; background: var(--gold); }
+.step:nth-of-type(3) .step__tile { height: 54vh; background: var(--red); }
+.step:nth-of-type(4) .step__tile { height: 66vh; background: var(--night); }
+.step__tile img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+.step h3 { margin-top: 16px; font: 600 var(--step-lead)/1.2 var(--text); }
+.step p { margin-top: 6px; color: var(--sky-soft); font-size: var(--step-body); line-height: 1.45; max-width: 26rem; }
+.steps-pad { height: 0; }
+
+/* ---------- 6. Вопросы: полоса на вопрос ---------- */
+.band { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; padding: 56px var(--m); }
+.band--head { min-height: 40svh; align-items: end; }
+.band--head h2 { grid-column: 1 / 13; font-size: clamp(3rem, 7vw, 7.5rem); }
+.band:nth-child(even of .band--q) { background: var(--gold); }
+.band:nth-child(odd of .band--q) { background: var(--paper); }
+.band__q { grid-column: 1 / 6; font: 600 clamp(1.5rem, 1.1rem + 1vw, 2rem)/1.15 var(--text); letter-spacing: -0.01em; }
+.band__a { grid-column: 7 / 13; font-size: var(--step-body); line-height: 1.5; max-width: 40rem; }
+.band__a ol { margin: 0; padding-left: 1.3em; }
+.band__a li + li { margin-top: 8px; }
+.band__a li::marker { font-weight: 600; }
+.tumar { display: inline-block; width: 0.9em; height: 0.9em; margin-right: 0.35em; vertical-align: -0.05em; }
+
+/* ---------- 7. Запись: идея наоборот ---------- */
+.cta { position: relative; min-height: 92svh; padding: 14vh var(--m) 40px; display: flex; flex-direction: column; }
+.cta h2 { font-size: clamp(3.25rem, 10vw, 10rem); line-height: 0.9; }
+.cta__row { margin-top: auto; padding-top: 64px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; align-items: end; }
+.cta__row p { grid-column: 1 / 6; font-size: var(--step-lead); line-height: 1.35; }
+.cta__row .btn { grid-column: 7 / 13; justify-self: end; min-height: 56px; font-size: var(--step-lead); white-space: nowrap; }
+.signup { margin-top: 48px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; row-gap: 20px; }
+.signup.is-closed { display: none; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field--name { grid-column: 1 / 5; }
+.field--age { grid-column: 5 / 7; }
+.field--dir { grid-column: 7 / 10; }
+.field--who { grid-column: 10 / 13; }
+.field--msg { grid-column: 1 / 10; }
+.signup__go { grid-column: 10 / 13; align-self: end; }
+.signup__go .btn { width: 100%; min-height: 56px; }
+.field label { font-weight: 600; font-size: var(--step-small); color: var(--night-soft); }
+.field input, .field select, .field textarea {
+  width: 100%; min-height: 52px; padding: 12px 14px;
+  border: 2px solid rgba(244, 238, 226, 0.4); border-radius: var(--radius);
+  background: transparent; color: var(--paper);
+  font: 400 var(--step-body)/1.4 var(--text);
+  caret-color: var(--gold);
+  transition: border-color 200ms ease;
+}
+.field select option { color: var(--night); }
+.field textarea { resize: vertical; min-height: 52px; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); outline: none; }
+.field input::placeholder, .field textarea::placeholder { color: #9aa3bf; }
+.field input[aria-invalid="true"] { border-color: #ff8a7a; }
+.field .err { color: #ffb4a8; font-size: var(--step-small); min-height: 1.2em; }
+.result { grid-column: 1 / 13; border: 2px solid var(--gold); border-radius: var(--radius); padding: 20px; }
+.result h3 { font: 600 var(--step-lead)/1.2 var(--text); color: var(--gold); }
+.result p { margin-top: 8px; color: var(--night-soft); }
+.result textarea { margin-top: 16px; width: 100%; min-height: 9em; overflow-wrap: anywhere; padding: 14px; border: 0; border-radius: var(--radius); background: var(--paper); color: var(--night); font: 400 var(--step-body)/1.5 var(--text); resize: vertical; }
+.result .btn { margin-top: 16px; }
+
+/* ---------- 8. Подвал из плиток ---------- */
+.foot { padding: 160px var(--m) var(--m); background: var(--night); }
+.foot__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); }
+.ft { border-radius: var(--radius); padding: 20px; min-height: 220px; display: flex; flex-direction: column; justify-content: space-between; }
+.ft--say { grid-column: 1 / 5; }
+.ft--say p:first-child { font-size: var(--step-lead); line-height: 1.25; font-weight: 600; }
+.ft--nav { grid-column: 5 / 8; }
+.ft--nav ul { list-style: none; margin: 0; padding: 0; }
+.ft--nav li + li { margin-top: 6px; }
+.ft--nav a { text-decoration: underline 2px transparent; transition: text-decoration-color 200ms ease; }
+@media (hover: hover) and (pointer: fine) { .ft--nav a:hover { text-decoration-color: currentColor; } }
+.ft--time { grid-column: 8 / 10; }
+.ft--time .clock { font: 800 var(--step-head)/1 var(--display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ft--word { grid-column: 10 / 13; }
+.ft--word p:first-child { font: 600 var(--step-lead)/1.3 var(--text); }
+.ft--mark { grid-column: 1 / 9; min-height: 320px; align-items: center; justify-content: center; text-align: center; }
+.ft--mark span { font: 800 clamp(2.5rem, 7vw, 7rem)/0.9 var(--display); letter-spacing: -0.04em; }
+.ft--go { grid-column: 9 / 13; min-height: 320px; text-decoration: none; transition: background-color 220ms ease; }
+@media (hover: hover) and (pointer: fine) { .ft--go:hover { background: #a3201a; } }
+.ft--go p { font: 800 var(--step-lead)/1 var(--display); letter-spacing: -0.03em; }
+.ft--go svg { width: 64px; height: 64px; align-self: flex-end; transition: transform 260ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .ft--go:hover svg { transform: translate(6px, -6px); } }
+.ft--credits { grid-column: 1 / 13; min-height: 0; }
+.credits { font-size: var(--step-small); line-height: 1.5; }
+.small { font-size: var(--step-small); }
+
+/* ---------- Телефон и планшет ---------- */
+@media (max-width: 1023px) {
+  .yurt__copy { display: contents; }
+  .yurt__copy > * { grid-column: 1 / 13; }
+  .yurt__stage { grid-column: 1 / 13; order: 2; height: 62vw; min-height: 300px; margin-top: 24px; }
+  .parts { order: 3; margin-top: 24px; }
+  .yurt__note { order: 4; }
+  .dir__name { grid-column: 1 / 13; }
+  .dir__text { grid-column: 2 / 13; margin-top: 8px; }
+  .dir { margin-bottom: 28px; }
+  .band__q { grid-column: 1 / 13; }
+  .band__a { grid-column: 1 / 13; margin-top: 16px; }
+  .steps { grid-template-columns: 1fr; row-gap: 28px; }
+  .steps h2, .step, .step:nth-of-type(n) { grid-column: 1; grid-row: auto; }
+  .step:nth-of-type(1) .step__tile { height: 34vw; }
+  .step:nth-of-type(2) .step__tile { height: 46vw; }
+  .step:nth-of-type(3) .step__tile { height: 62vw; }
+  .step:nth-of-type(4) .step__tile { height: 72vw; }
+  .ft--say, .ft--nav, .ft--time, .ft--word { grid-column: span 6; }
+  .ft--mark, .ft--go { grid-column: 1 / 13; }
+  .signup > * { grid-column: 1 / 13 !important; }
+  .cta { min-height: 0; }
+  .cta__row { padding-top: 120px; }
+  .cta__row p { grid-column: 1 / 7; }
+  .cta__row .btn { grid-column: 7 / 13; white-space: nowrap; }
+  .band--head { min-height: 26svh; }
+}
+@media (max-width: 767px) {
+  .hero { --seam: 46%; --hl: 15.5vw; }
+  .hero__bar { padding-top: 16px; }
+  .hero__bar .btn { min-height: 44px; padding: 0 14px; }
+  .hero__crown { top: 72px; }
+  .hero__lead { left: var(--m); right: var(--m); width: auto; transform: none; bottom: 28px; font-size: var(--step-body); text-align: left; }
+  .chapter { padding: 12vh var(--m); }
+  .dir__name { font-size: 11vw; }
+  .board { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .t-head { grid-area: 1 / 1 / 2 / 3; aspect-ratio: auto; }
+  .t-f1 { grid-area: 3 / 3; }
+  .t-f2 { grid-area: 5 / 1; }
+  .t-f3 { display: none; }
+  .t-act { grid-area: 6 / 3; }
+  .t-head h2 { font-size: 8cqw; }
+  .tile--c { padding: 2.6cqw; }
+  .tile--c p { font-size: max(0.8125rem, 3cqw); }
+  .tile .big { font-size: 6.6cqw; }
+  .tile--act svg { width: 7.4cqw; height: 7.4cqw; }
+  .tile--pic.only-wide { display: none; }
+  .band { padding: 32px 20px; }
+  .band--head { min-height: 30svh; }
+  .band--head h2 { font-size: 13vw; }
+  .band__q { font-size: var(--step-lead); }
+  .cta { min-height: 80svh; padding-top: 10vh; }
+  .cta__row { padding-top: 64px; }
+  .cta h2 { font-size: 12vw; }
+  .cta__row { row-gap: 24px; }
+  .cta__row p, .cta__row .btn { grid-column: 1 / 13; }
+  .cta__row .btn { justify-self: stretch; white-space: normal; }
+  .foot { padding-top: 96px; }
+  .foot__grid { gap: 6px; }
+  .ft--mark { order: -2; min-height: 160px; }
+  .ft--go { order: -1; min-height: 180px; }
+  .ft--nav, .ft--word { grid-column: span 6; }
+  .ft--time, .ft--say { grid-column: span 6; }
+  .ft { min-height: 0; gap: 20px; }
+}
+@media (max-width: 479px) {
+  .ft--say, .ft--nav, .ft--time, .ft--word { grid-column: 1 / 13; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="shan" viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="5"/><path d="M13 25Q32 12 51 25M13 39Q32 52 51 39M25 13Q12 32 25 51M39 13Q52 32 39 51" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></symbol>
+  <symbol id="horn" viewBox="0 0 120 120"><path d="M60 78C60 50 72 30 92 30C108 30 112 52 102 62C94 70 80 66 82 54C83 47 92 46 94 52M60 78C60 50 48 30 28 30C12 30 8 52 18 62C26 70 40 66 38 54C37 47 28 46 26 52M60 78V108M60 18L67 28L60 38L53 28Z" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="arrow" viewBox="0 0 48 48"><path d="M12 36L36 12M16 12H36V32" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square"/></symbol>
+  <symbol id="tumar" viewBox="0 0 40 40"><path d="M20 4L36 34H4Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><path d="M20 15L27 28H13Z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="hero" id="top">
+  <div class="hero__top" aria-hidden="true"></div>
+  <div class="hero__bar">
+    <a class="wordmark" href="#top" aria-label="Шаңырақ Code, наверх"><svg aria-hidden="true"><use href="#shan"/></svg>Шаңырақ Code</a>
+    <a class="btn" href="#signup">Записаться</a>
+  </div>
+  <div class="hero__crown" aria-hidden="true">
+    <svg class="crown-fallback" viewBox="0 0 64 64" style="color:var(--gold)"><use href="#shan"/></svg>
+  </div>
+  <h1 class="hl display">
+    <span class="hl__copy hl__copy--top"><span class="ln"><span>Школа ИИ</span></span><span class="ln"><span>и кода</span></span></span>
+    <span class="hl__copy hl__copy--bot" aria-hidden="true"><span class="ln"><span>Школа ИИ</span></span><span class="ln"><span>и кода</span></span></span>
+  </h1>
+  <p class="hero__lead">Шаңырақ Code — онлайн-школа для подростков 14–18 лет: игры, Roblox, чат-боты, 3D-сайты, приложения, 3D-модели и честная работа с ИИ.</p>
+</header>
+
+<main>
+  <section class="chapter on-gold" id="directions" aria-labelledby="dirs-h">
+    <ul class="dirs">
+      <li class="dir dir--head"><h2 class="dir__name" id="dirs-h">Семь направлений</h2><p class="dir__text">Как уықтар сходятся к шаңыраку, все семь ведут к одному: к твоему готовому проекту.</p></li>
+      <li class="dir"><span class="dir__name">Игры<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Механика, уровни, персонажи и звук. В конце модуля у тебя играбельная демо-версия твоей игры.</p></li>
+      <li class="dir"><span class="dir__name">Roblox<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Roblox Studio и язык Luau: свой режим, в который друзья заходят прямо из Roblox.</p></li>
+      <li class="dir"><span class="dir__name">Чат-боты<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Бот для Telegram на Python: отвечает, считает, запоминает и умеет спрашивать нейросеть.</p></li>
+      <li class="dir"><span class="dir__name">3D-сайты<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">HTML, CSS, JavaScript и Three.js: сайт с анимацией и 3D-сценой, такой же, как этот.</p></li>
+      <li class="dir"><span class="dir__name">Приложения<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Мобильное приложение от идеи и экранов до версии, которую ставишь себе на телефон.</p></li>
+      <li class="dir"><span class="dir__name">3D-модели<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Blender: форма, материалы и свет. Модели идут в твою игру, на сайт или в печать.</p></li>
+      <li class="dir"><span class="dir__name">Честный ИИ<svg aria-hidden="true"><use href="#horn"/></svg></span><p class="dir__text">Как устроены нейросети, как писать запросы и проверять ответы. ИИ помогает, а автор ты.</p></li>
+    </ul>
+  </section>
+
+  <section class="chapter on-night yurt" id="yurt" aria-labelledby="yurt-h">
+    <div class="yurt__copy">
+      <h2 class="display" id="yurt-h">Собери юрту</h2>
+      <p>Проект собирается как юрта: по частям и в своём порядке. Нажми на часть, и юрта встанет до неё.</p>
+      <div class="parts" role="group" aria-label="Части юрты" hidden>
+        <button class="part" type="button" data-p="0.34" data-note="n1" aria-pressed="false">Кереге<small>основа</small></button>
+        <button class="part" type="button" data-p="0.6" data-note="n2" aria-pressed="false">Уықтар<small>направление</small></button>
+        <button class="part" type="button" data-p="0.74" data-note="n3" aria-pressed="false">Шаңырақ<small>свой проект</small></button>
+        <button class="part" type="button" data-p="1" data-note="n4" aria-pressed="false">Киіз<small>показ</small></button>
+      </div>
+      <div class="yurt__note no-js-list" aria-live="polite">
+        <div class="note" id="n1"><h3>Кереге: основа</h3><p>Решётка стен держит весь дом. В учёбе это основы: переменные, условия, циклы и функции. Без них не стоит ни игра, ни бот.</p></div>
+        <div class="note" id="n2"><h3>Уықтар: направление</h3><p>Жерди идут от стены вверх и сходятся в одной точке. Так ты выбираешь путь: игры, Roblox, боты, сайты, приложения, 3D или ИИ.</p></div>
+        <div class="note" id="n3"><h3>Шаңырақ: свой проект</h3><p>Венец держит купол и пропускает свет. Свой проект собирает выученное в одну вещь, которую не стыдно показать.</p></div>
+        <div class="note" id="n4"><h3>Киіз: показ</h3><p>Войлок превращает каркас в дом. Дизайн, проверка и демо-день превращают код в работу для портфолио.</p></div>
+      </div>
+    </div>
+    <div class="yurt__stage">
+      <img src="assets/felt-yurt-under-construction-altai-mountains.jpg" width="1800" height="1200" loading="lazy" alt="Каркас юрты: решётка кереге и жерди уық, на часть купола уже натянут войлок. Горы Алтая.">
+      <canvas id="yurt-3d" aria-label="Трёхмерная юрта, которая собирается по частям" role="img"></canvas>
+    </div>
+  </section>
+
+  <section class="board-wrap on-paper" id="berkut" aria-labelledby="board-h">
+    <div class="board" id="board">
+      <div class="tile tile--c on-red t-head"><h2 class="display" id="board-h">Взгляд беркута</h2><p class="small">Видеть цель с высоты и идти к ней кругами.</p></div>
+      <div class="tile tile--c on-gold t-f1"><span class="big">14–18</span><p>лет, группы по возрасту</p></div>
+      <div class="tile tile--c on-sky t-f2"><span class="big">Онлайн</span><p>уроки из любого города</p></div>
+      <div class="tile tile--c on-night t-f3"><span class="big">1 модуль</span><p>= 1 готовый проект</p></div>
+      <a class="tile tile--c tile--act on-red t-act" href="#signup"><p>Записаться на пробный урок</p><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+    </div>
+    <p class="board-cap">Казах с беркутом на коне. Фотография Сергея Борисова, 1911–1914.</p>
+  </section>
+
+  <section class="chapter on-sky path" id="path" aria-labelledby="path-h">
+    <div class="steps">
+      <h2 class="display" id="path-h">Путь до демо-дня</h2>
+      <article class="step">
+        <div class="step__tile"><img src="assets/ceiling-and-smoke-hoop-of-a-turkic.jpg" width="1800" height="1200" loading="lazy" alt="Шаңырақ изнутри юрты: деревянный венец и жерди."></div>
+        <h3>Сначала пробный урок</h3>
+        <p>Знакомимся, пишем первую программу и вместе выбираем направление.</p>
+      </article>
+      <article class="step">
+        <div class="step__tile"><img src="assets/felt-yurt-under-construction-altai-mountains.jpg" width="1800" height="1200" loading="lazy" alt="Юрта в процессе сборки в горах Алтая."></div>
+        <h3>Потом основы</h3>
+        <p>Логика и язык на маленьких задачах: каждую неделю что-то уже работает.</p>
+      </article>
+      <article class="step">
+        <div class="step__tile"><img src="assets/kazakh-yurts-at-night-in-the-kyzylkum.jpg" width="1800" height="1201" loading="lazy" alt="Казахские юрты ночью в пустыне Кызылкум, внутри горит свет."></div>
+        <h3>Затем свой проект</h3>
+        <p>Собираешь проект модуля по шагам, преподаватель рядом на каждом.</p>
+      </article>
+      <article class="step">
+        <div class="step__tile"><img src="assets/tian-shan-in-kyrgyzstan-02.jpg" width="1800" height="1139" loading="lazy" alt="Хребты Тянь-Шаня под голубым небом."></div>
+        <h3>В конце демо-день</h3>
+        <p>Показываешь работу семье и друзьям, проект уходит в портфолио.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-h">
+    <div class="band band--head on-red"><h2 class="display" id="faq-h">Тұмар и вопросы</h2></div>
+    <div class="band band--q">
+      <h3 class="band__q"><svg class="tumar" aria-hidden="true"><use href="#tumar"/></svg>Пять правил тұмара: как мы работаем с ИИ</h3>
+      <div class="band__a"><ol>
+        <li>Сдаёшь только тот код, в котором понимаешь каждую строку.</li>
+        <li>Пишешь, где помогал ИИ. Это не стыдно, это честно.</li>
+        <li>Не отдаёшь нейросети чужие личные данные и пароли.</li>
+        <li>Проверяешь факты и код: ИИ ошибается уверенно.</li>
+        <li>ИИ здесь напарник. Автор проекта ты.</li>
+      </ol></div>
+    </div>
+    <div class="band band--q"><h3 class="band__q">Нужен ли опыт программирования?</h3><p class="band__a">Нет. Начинаем с нуля, а на пробном уроке понимаем, с какого места стартовать именно тебе. Если ты уже что-то пишешь, пойдёшь быстрее.</p></div>
+    <div class="band band--q"><h3 class="band__q">Как проходят онлайн-уроки?</h3><p class="band__a">По видеосвязи: преподаватель показывает экран, ты повторяешь у себя, потом наоборот — показываешь свой. Между уроками — небольшое задание к следующему шагу проекта.</p></div>
+    <div class="band band--q"><h3 class="band__q">Какой нужен компьютер?</h3><p class="band__a">Обычный ноутбук или компьютер с интернетом и микрофоном. Программы бесплатные — Roblox Studio, Blender, VS Code, Python. Ставим их вместе на первом занятии.</p></div>
+    <div class="band band--q"><h3 class="band__q">Что останется после курса?</h3><p class="band__a">Готовые проекты: игра, бот, сайт или модель — то, что можно открыть, запустить и показать. Плюс привычка доводить начатое до конца.</p></div>
+    <div class="band band--q"><h3 class="band__q">А что с расписанием и оплатой?</h3><p class="band__a">Это обсуждаем после пробного урока, когда понятны направление и уровень. Родители получают все ответы до первого платного занятия.</p></div>
+  </section>
+
+  <section class="cta on-night" id="signup" aria-labelledby="cta-h">
+    <h2 class="display" id="cta-h"><span class="ln"><span>Собери свой</span></span><span class="ln"><span>шаңырақ</span></span></h2>
+    <form class="signup" id="signup-form" novalidate>
+      <div class="field field--name"><label for="f-name">Имя</label><input id="f-name" name="name" autocomplete="given-name" required maxlength="80" placeholder="Как к тебе обращаться"><span class="err" id="e-name" aria-live="polite"></span></div>
+      <div class="field field--age"><label for="f-age">Возраст</label><select id="f-age" name="age"><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option></select></div>
+      <div class="field field--dir"><label for="f-dir">Направление</label><select id="f-dir" name="dir"><option>Пока не знаю</option><option>Игры</option><option>Roblox</option><option>Чат-боты</option><option>3D-сайты</option><option>Приложения</option><option>3D-модели</option><option>Честный ИИ</option></select></div>
+      <div class="field field--who"><label for="f-who">Кто пишет</label><select id="f-who" name="who"><option>Ученик</option><option>Родитель</option></select></div>
+      <div class="field field--msg"><label for="f-msg">Что хочется сделать (необязательно)</label><textarea id="f-msg" name="msg" rows="2" maxlength="600" placeholder="Например: свою игру про степь"></textarea></div>
+      <div class="signup__go"><button class="btn" type="submit">Собрать заявку</button></div>
+      <div class="result" id="result" hidden>
+        <h3>Заявка готова</h3>
+        <p>Скопируй текст и отправь его преподавателю там, где ты узнал о школе.</p>
+        <textarea id="result-text" readonly aria-label="Текст заявки"></textarea>
+        <button class="btn btn--night" type="button" id="copy" style="background:var(--gold);color:var(--night)">Скопировать текст</button>
+      </div>
+    </form>
+    <div class="cta__row">
+      <p>Первый урок пробный: поймёшь, нравится ли, и выберешь своё направление.</p>
+      <button class="btn" type="button" id="open-form" aria-controls="signup-form" aria-expanded="true">Записаться на пробный урок<svg aria-hidden="true" viewBox="0 0 48 48"><path d="M8 24H38M26 12L38 24L26 36" fill="none" stroke="currentColor" stroke-width="4"/></svg></button>
+    </div>
+  </section>
+</main>
+
+<footer class="foot on-night">
+  <div class="foot__grid">
+    <div class="ft ft--say on-paper"><p>Онлайн-школа ИИ и программирования для подростков 14–18 лет.</p><p class="small">© 2026 Шаңырақ Code</p></div>
+    <nav class="ft ft--nav on-gold" aria-label="Разделы"><ul>
+      <li><a href="#directions">Направления</a></li>
+      <li><a href="#yurt">Собери юрту</a></li>
+      <li><a href="#path">Путь до демо-дня</a></li>
+      <li><a href="#faq">Вопросы</a></li>
+      <li><a href="#signup">Запись</a></li>
+    </ul></nav>
+    <div class="ft ft--time on-paper"><p class="small">Уроки онлайн. В Казахстане сейчас</p><span class="clock" id="clock"></span></div>
+    <div class="ft ft--word on-paper"><p lang="kk">Білімді мыңды жығар, білекті бірді жығар.</p><p class="small">Знающий одолеет тысячу, сильный — одного.</p></div>
+    <div class="ft ft--mark on-sky"><span>Шаңырақ Code</span></div>
+    <a class="ft ft--go on-red" href="#signup"><p>Записаться на пробный</p><svg aria-hidden="true"><use href="#arrow"/></svg></a>
+    <div class="ft ft--credits on-paper">
+      <p class="credits">Фотографии: <a href="https://commons.wikimedia.org/wiki/File:Kazakh_yurts_at_night_in_the_Kyzylkum_desert,_Uzbekistan.jpg">«Kazakh yurts at night in the Kyzylkum desert»</a>, Carsten Siegel, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Felt_yurt_under_construction,_Altai_Mountains.jpg">«Felt yurt under construction, Altai Mountains»</a>, Alexandr frolov, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:SB_-_Kazakh_man_on_horse_with_golden_eagle_1911-1914.jpg">«Kazakh man on horse with golden eagle»</a>, Сергей Борисов, 1911–1914, <a href="https://creativecommons.org/publicdomain/mark/1.0/">общественное достояние</a>; <a href="https://commons.wikimedia.org/wiki/File:Ceiling_and_smoke_hoop_of_a_Turkic_yurt_in_the_Museum_of_Nomadic_Cultures_in_Elista,_Kalmykia,_Russia.jpg">«Ceiling and smoke hoop of a Turkic yurt»</a>, Nakonana, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Tian_Shan_in_Kyrgyzstan_02.jpg">«Tian Shan in Kyrgyzstan 02»</a>, Bgag, <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>. Все через Wikimedia Commons.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+document.documentElement.classList.add('js');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- плитки беркута: одна фотография, разрезанная по доске ----------
+(() => {
+  const board = document.getElementById('board');
+  const total = 24;
+  const colour = board.children.length;
+  for (let i = 0; i < total - colour; i++) {
+    const t = document.createElement('div');
+    t.className = 'tile tile--pic';
+    // на телефоне доска 3×6: колонок 3, цветных плиток меньше, лишние куски прячем
+    if (i >= 18 - 5) t.classList.add('only-wide');
+    t.setAttribute('aria-hidden', 'true');
+    t.innerHTML = '<span class="piece"></span>';
+    board.appendChild(t);
+  }
+  // снимок ложится на всю доску как cover, без растяжения; каждая плитка берёт свой кусок
+  const IW = 1800, IH = 1159;
+  const fit = () => {
+    const bw = board.clientWidth, bh = board.clientHeight;
+    const k = Math.max(bw / IW, bh / IH), w = IW * k, h = IH * k;
+    const ox = (bw - w) / 2, oy = (bh - h) / 2;
+    board.querySelectorAll('.tile--pic').forEach(t => {
+      const p = t.firstChild;
+      p.style.backgroundSize = w + 'px ' + h + 'px';
+      p.style.backgroundPosition = (ox - t.offsetLeft) + 'px ' + (oy - t.offsetTop) + 'px';
+    });
+  };
+  new ResizeObserver(fit).observe(board);
+})();
+
+// ---------- юрта: кнопки частей ----------
+(() => {
+  const parts = document.querySelector('.parts');
+  const notes = document.querySelector('.yurt__note');
+  parts.hidden = false;
+  notes.classList.remove('no-js-list');
+  window.__yurt = { p: 0 };
+  const pick = btn => {
+    parts.querySelectorAll('.part').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    notes.querySelectorAll('.note').forEach(n => n.classList.toggle('is-on', n.id === btn.dataset.note));
+    window.__yurt.p = parseFloat(btn.dataset.p);
+  };
+  parts.addEventListener('click', e => { const b = e.target.closest('.part'); if (b) pick(b); });
+  // при первом появлении юрта сама встаёт до кереге
+  const first = parts.querySelector('.part');
+  notes.querySelector('#n1').classList.add('is-on');
+  first.setAttribute('aria-pressed', 'true');
+  new IntersectionObserver(([en], io) => {
+    if (!en.isIntersecting) return;
+    io.disconnect();
+    pick(first);
+  }, { threshold: 0.35 }).observe(document.getElementById('yurt'));
+})();
+
+// ---------- запись: заявка собирается в текст ----------
+(() => {
+  const form = document.getElementById('signup-form');
+  const open = document.getElementById('open-form');
+  const name = document.getElementById('f-name');
+  const err = document.getElementById('e-name');
+  const result = document.getElementById('result');
+  const out = document.getElementById('result-text');
+  form.classList.add('is-closed');
+  open.setAttribute('aria-expanded', 'false');
+  open.addEventListener('click', () => {
+    const show = form.classList.contains('is-closed');
+    form.classList.toggle('is-closed', !show);
+    open.setAttribute('aria-expanded', String(show));
+    if (show) {
+      if (!reduce) gsap.from(form.children, { y: 16, opacity: 0, duration: 0.5, stagger: 0.04, ease: 'expo.out' });
+      name.focus({ preventScroll: true });
+      ScrollTrigger.refresh();
+    }
+  });
+  name.addEventListener('input', () => { if (name.value.trim()) { name.removeAttribute('aria-invalid'); err.textContent = ''; } });
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!name.value.trim()) {
+      name.setAttribute('aria-invalid', 'true');
+      name.setAttribute('aria-describedby', 'e-name');
+      err.textContent = 'Напиши имя, так преподаватель поймёт, кому отвечать.';
+      name.focus();
+      return;
+    }
+    const f = new FormData(form);
+    const msg = (f.get('msg') || '').trim();
+    out.value = 'Здравствуйте! Хочу на пробный урок в Шаңырақ Code.\n'
+      + 'Имя: ' + f.get('name').trim() + '\n'
+      + 'Возраст: ' + f.get('age') + '\n'
+      + 'Направление: ' + f.get('dir') + '\n'
+      + 'Пишет: ' + f.get('who').toLowerCase()
+      + (msg ? '\nИдея: ' + msg : '');
+    result.hidden = false;
+    out.style.height = 'auto';
+    out.style.height = out.scrollHeight + 4 + 'px';
+    if (!reduce) gsap.from(result, { y: 12, opacity: 0, duration: 0.45, ease: 'expo.out' });
+    ScrollTrigger.refresh();
+  });
+  document.getElementById('copy').addEventListener('click', async e => {
+    const b = e.currentTarget;
+    try { await navigator.clipboard.writeText(out.value); b.textContent = 'Скопировано'; }
+    catch { out.select(); b.textContent = 'Выдели и скопируй вручную'; }
+    setTimeout(() => { b.textContent = 'Скопировать текст'; }, 2200);
+  });
+})();
+
+// ---------- часы в подвале ----------
+(() => {
+  const el = document.getElementById('clock');
+  let fmt;
+  try { fmt = new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Almaty' }); }
+  catch { fmt = null; }
+  const tick = () => { el.textContent = fmt ? fmt.format(new Date()) : ''; };
+  tick();
+  setInterval(tick, 15000);
+})();
+
+// ---------- движение ----------
+(() => {
+  if (!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger);
+  if (reduce) return;
+
+  // плавная прокрутка только для живого посетителя: автотесты и скриншоты листают страницу сами
+  const lenis = navigator.webdriver ? null : new Lenis({ duration: 1.1 });
+  if (lenis) {
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  if (lenis) document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    const el = id === '#top' ? 0 : document.querySelector(id);
+    if (el === null) return;
+    e.preventDefault();
+    lenis.scrollTo(el, { duration: 1.4 });
+  }));
+
+  // главный момент: строки заголовка поднимаются из-под своей линии
+  const lines = gsap.utils.toArray('.hl .ln > span');
+  const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  intro.from(lines.filter((_, i) => i % 2 === 0), { yPercent: 108, duration: 0.9 }, 0.1)
+       .from(lines.filter((_, i) => i % 2 === 1), { yPercent: 108, duration: 0.9 }, 0.21)
+       .from('.hero__lead, .hero__bar', { y: 14, opacity: 0, duration: 0.7 }, 0.55)
+       .from('.hero__crown', { opacity: 0, scale: 0.92, duration: 1.2 }, 0.35);
+
+  // шапка: заголовок и венец уходят с разной скоростью
+  gsap.to('.hl', { y: () => innerHeight * 0.12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  gsap.to('.hero__crown', { yPercent: -30, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+  // направления: каждая строка поднимается из маски
+  gsap.utils.toArray('.dir').forEach(row => {
+    const name = row.querySelector('.dir__name');
+    const wrap = document.createElement('span');
+    wrap.className = 'ln';
+    name.parentNode.insertBefore(wrap, name);
+    wrap.appendChild(name);
+    wrap.style.gridColumn = getComputedStyle(name).gridColumnStart + ' / ' + getComputedStyle(name).gridColumnEnd;
+    name.style.display = 'block';
+    gsap.from(name, { yPercent: 100, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: row, start: 'top bottom' } });
+    gsap.from(row.querySelector('.dir__text'), { opacity: 0, y: 12, duration: 0.7, delay: 0.12, ease: 'expo.out', scrollTrigger: { trigger: row, start: 'top bottom' } });
+  });
+
+  // юрта: текст и кнопки входят по очереди
+  gsap.from('.yurt__copy > *', { y: 24, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'expo.out', scrollTrigger: { trigger: '.yurt', start: 'top 70%' } });
+
+  // беркут: плитки собираются от центра доски
+  ScrollTrigger.batch('#board .tile', {
+    start: 'top bottom',
+    onEnter: els => gsap.from(els, { opacity: 0, scale: 0.94, duration: 0.7, stagger: { each: 0.03, from: 'center' }, ease: 'expo.out', overwrite: true }),
+    once: true
+  });
+
+  // путь: плитки растут из-под линии, меньшая раньше
+  gsap.utils.toArray('.step').forEach((s, i) => {
+    gsap.from(s.querySelector('.step__tile'), { clipPath: 'inset(100% 0 0 0)', ease: 'none', scrollTrigger: { trigger: '.steps', start: () => 'top ' + (85 - i * 6) + '%', end: () => 'top ' + (40 - i * 6) + '%', scrub: 0.6 } });
+    gsap.from(s.querySelector('img'), { scale: 1.18, ease: 'none', scrollTrigger: { trigger: '.steps', start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.from([s.querySelector('h3'), s.querySelector('p')], { y: 14, opacity: 0, duration: 0.6, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: s, start: 'top 90%' } });
+  });
+
+  // вопросы: вопрос въезжает, ответ проявляется
+  gsap.from('.band--head h2', { yPercent: 40, opacity: 0, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: '.band--head', start: 'top 80%' } });
+  gsap.utils.toArray('.band--q').forEach(b => {
+    gsap.from(b.querySelector('.band__q'), { x: -24, opacity: 0, duration: 0.7, ease: 'expo.out', scrollTrigger: { trigger: b, start: 'top 85%' } });
+    gsap.from(b.querySelector('.band__a'), { y: 14, opacity: 0, duration: 0.7, delay: 0.1, ease: 'expo.out', scrollTrigger: { trigger: b, start: 'top 85%' } });
+  });
+
+  // запись: заголовок повторяет главный момент
+  gsap.from('.cta h2 .ln > span', { yPercent: 108, duration: 0.9, stagger: 0.11, ease: 'expo.out', scrollTrigger: { trigger: '.cta', start: 'top 70%' } });
+  gsap.from('.cta__row > *', { y: 16, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'expo.out', scrollTrigger: { trigger: '.cta__row', start: 'top 95%' } });
+
+  // подвал: плитки встают снизу
+  gsap.from('.ft', { y: 30, opacity: 0, duration: 0.7, stagger: 0.05, ease: 'expo.out', scrollTrigger: { trigger: '.foot', start: 'top 92%' } });
+
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+  addEventListener('load', () => ScrollTrigger.refresh());
+})();
+</script>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js';
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const small = matchMedia('(max-width: 760px)').matches;
+
+const HORN_PATH = 'M60 78C60 50 72 30 92 30C108 30 112 52 102 62C94 70 80 66 82 54C83 47 92 46 94 52M60 78C60 50 48 30 28 30C12 30 8 52 18 62C26 70 40 66 38 54C37 47 28 46 26 52M60 78V108M60 98C60 90 70 86 76 90C80 93 78 99 73 98M60 98C60 90 50 86 44 90C40 93 42 99 47 98M60 18L67 28L60 38L53 28Z';
+
+function radialTexture(stops) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const g = c.getContext('2d');
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  stops.forEach(([o, col]) => gr.addColorStop(o, col));
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+function canvasTexture(w, h, draw) {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
+
+function drawHorn(g, x, y, size, color, lw, rot = 0) {
+  g.save();
+  g.translate(x, y);
+  g.rotate(rot);
+  g.scale(size / 120, size / 120);
+  g.translate(-60, -63);
+  g.strokeStyle = color;
+  g.lineWidth = (lw * 120) / size;
+  g.lineCap = 'round';
+  g.lineJoin = 'round';
+  g.stroke(new Path2D(HORN_PATH));
+  g.restore();
+}
+
+// Студийное окружение для металла: светлые панели вокруг
+function makeEnv(renderer) {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = new THREE.Scene();
+  env.background = new THREE.Color(0x0a1430);
+  const panel = (hex, k, pos, w, h) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(hex).multiplyScalar(k), side: THREE.DoubleSide }));
+    m.position.set(...pos);
+    m.lookAt(0, 0, 0);
+    env.add(m);
+  };
+  panel(0xfff1d6, 6, [0, 6, 5], 12, 3);
+  panel(0xffb85c, 3.5, [7, 1, 3], 3, 8);
+  panel(0xfff6ea, 2.2, [-7, -1, 3], 3, 8);
+  panel(0x8fd8e8, 1.6, [0, -1, -7], 10, 3);
+  return pmrem.fromScene(env, 0.035).texture;
+}
+
+function makeRenderer(canvas) {
+  try {
+    const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    r.setPixelRatio(Math.min(devicePixelRatio, small ? 1.5 : 2));
+    r.toneMapping = THREE.ACESFilmicToneMapping;
+    return r;
+  } catch (err) {
+    return null;
+  }
+}
+
+// Сцена рисуется только пока она рядом с экраном; шейдеры собираются заранее
+function startScene(el, renderer, scene, camera, frame) {
+  let on = false;
+  const go = () => new IntersectionObserver(([en]) => {
+    if (en.isIntersecting === on) return;
+    on = en.isIntersecting;
+    renderer.setAnimationLoop(on ? frame : null);
+  }, { rootMargin: '120px 0px' }).observe(el);
+  renderer.domElement.addEventListener('webglcontextlost', () => renderer.setAnimationLoop(null));
+  renderer.compileAsync(scene, camera).then(go, go);
+}
+
+// Запуск после первой отрисовки и только когда блок близко
+function whenNear(el, fn) {
+  if (!el) return;
+  new IntersectionObserver(([en], io) => {
+    if (!en.isIntersecting) return;
+    io.disconnect();
+    requestAnimationFrame(() => setTimeout(fn, 0));
+  }, { rootMargin: '600px 0px' }).observe(el);
+}
+
+// Шаңырақ: обод и две пары перекрещенных дуг
+function buildCrown(gold, ringR) {
+  const shan = new THREE.Group();
+  const crownRing = new THREE.Mesh(new THREE.TorusGeometry(ringR, ringR * 0.1, 16, 96), gold);
+  crownRing.rotation.x = Math.PI / 2;
+  shan.add(crownRing);
+  const Rs = ringR * 1.3, Rb = ringR - ringR * 0.05, lift = Math.sqrt(Rs * Rs - Rb * Rb);
+  for (const o of [-0.44, 0, 0.44]) for (const ry of [0, Math.PI / 2]) {
+    const oo = o * ringR, L = Math.sqrt(Rb * Rb - oo * oo), pts = [];
+    for (let i = 0; i <= 20; i++) {
+      const x = -L + (2 * L * i) / 20;
+      pts.push(new THREE.Vector3(x, Math.sqrt(Math.max(0, Rs * Rs - x * x - oo * oo)) - lift, oo));
+    }
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 40, ringR * 0.045, 10, false), gold);
+    m.rotation.y = ry;
+    shan.add(m);
+  }
+  return shan;
+}
+
+// ---------- 3D-шаңырақ над заголовком ----------
+function initCrown() {
+  const box = document.querySelector('.hero__crown');
+  const canvas = document.createElement('canvas');
+  const renderer = makeRenderer(canvas);
+  if (!renderer) return;
+  box.querySelector('.crown-fallback').remove();
+  box.appendChild(canvas);
+  renderer.toneMappingExposure = 1.1;
+  const scene = new THREE.Scene();
+  scene.environment = makeEnv(renderer);
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
+  camera.position.set(0, 0, 9);
+  scene.add(new THREE.HemisphereLight(0xfff4dc, 0x00afca, 0.9));
+  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  key.position.set(3, 5, 6);
+  scene.add(key);
+
+  const gold = new THREE.MeshStandardMaterial({ color: 0xfec50c, metalness: 1, roughness: 0.28 });
+  const wood = new THREE.MeshStandardMaterial({ color: 0xc4291f, roughness: 0.5 });
+  const rig = new THREE.Group();
+  scene.add(rig);
+  const crown = buildCrown(gold, 1);
+  rig.add(crown);
+  // концы уықтар, уходящие от обода вниз и наружу
+  const N = 32, pole = new THREE.CylinderGeometry(0.03, 0.03, 1, 6);
+  pole.translate(0, -0.5, 0);
+  const poles = new THREE.InstancedMesh(pole, wood, N);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), s = new THREE.Vector3(1, 0.9, 1), p = new THREE.Vector3();
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    p.set(Math.cos(a) * 1.04, -0.02, Math.sin(a) * 1.04);
+    e.set(0, -a, -1.05, 'YXZ');
+    q.setFromEuler(e);
+    poles.setMatrixAt(i, m4.compose(p, q, s));
+  }
+  rig.add(poles);
+
+  const resize = () => {
+    const w = box.clientWidth, h = box.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    // венец целиком помещается в коробку по высоте и ширине
+    const halfH = 9 * Math.tan(THREE.MathUtils.degToRad(14)), halfW = halfH * camera.aspect;
+    rig.scale.setScalar(Math.min(halfH / 1.2, halfW / 1.7));
+  };
+  new ResizeObserver(resize).observe(box);
+  resize();
+
+  const timer = new THREE.Timer();
+  timer.connect(document);
+  let mx = 0, my = 0, tx = 0, ty = 0;
+  addEventListener('pointermove', ev => { tx = ev.clientX / innerWidth - 0.5; ty = ev.clientY / innerHeight - 0.5; }, { passive: true });
+  const frame = () => {
+    timer.update();
+    const t = timer.getElapsed();
+    mx += (tx - mx) * 0.06;
+    my += (ty - my) * 0.06;
+    rig.rotation.x = 0.95 + my * 0.3;
+    rig.rotation.y = (reduce ? 0 : t * 0.25) + mx * 0.6;
+    rig.rotation.z = mx * -0.08;
+    renderer.render(scene, camera);
+  };
+  startScene(box, renderer, scene, camera, frame);
+}
+
+// ---------- 3D-юрта, которая собирается по частям ----------
+function initYurt() {
+  const stage = document.querySelector('.yurt__stage');
+  const canvas = document.getElementById('yurt-3d');
+  const renderer = makeRenderer(canvas);
+  if (!renderer) return;
+  stage.classList.add('is-3d');
+  renderer.toneMappingExposure = 1.05;
+  const scene = new THREE.Scene();
+  scene.environment = makeEnv(renderer);
+  scene.environmentIntensity = 0.6;
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  scene.add(new THREE.HemisphereLight(0xc4d6ff, 0x3a2212, 0.55));
+  const key = new THREE.DirectionalLight(0xffe2b8, 2.2);
+  key.position.set(5, 8, 6);
+  scene.add(key);
+
+  const R = 2.6, H = 1.25, ringR = 0.55, roofTop = H + 1.3;
+  const up = new THREE.Vector3(0, 1, 0);
+  const yurt = new THREE.Group();
+  scene.add(yurt);
+  const wood = new THREE.MeshStandardMaterial({ color: 0xb4532e, roughness: 0.55, metalness: 0.05 });
+  const woodLight = new THREE.MeshStandardMaterial({ color: 0xcd6d3a, roughness: 0.5, metalness: 0.05 });
+  const gold = new THREE.MeshStandardMaterial({ color: 0xfec50c, metalness: 1, roughness: 0.3 });
+  const felt = new THREE.MeshStandardMaterial({ color: 0xf4eee2, roughness: 0.95, side: THREE.DoubleSide, transparent: true });
+
+  // текемет с орнаментом қошқар мүйіз
+  const rugTex = canvasTexture(1024, 1024, (g, w) => {
+    const c = w / 2;
+    g.fillStyle = '#9c2219';
+    g.fillRect(0, 0, w, w);
+    const circle = (r, lw) => { g.beginPath(); g.arc(c, c, r, 0, Math.PI * 2); g.strokeStyle = '#fec50c'; g.lineWidth = lw; g.stroke(); };
+    circle(498, 16); circle(470, 4); circle(320, 6); circle(296, 3);
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2;
+      drawHorn(g, c + Math.cos(a) * 395, c + Math.sin(a) * 395, 108, i % 2 ? '#f4eee2' : '#00afca', 9, a + Math.PI / 2);
+    }
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2;
+      drawHorn(g, c + Math.cos(a) * 120, c + Math.sin(a) * 120, 170, '#fec50c', 11, a + Math.PI / 2);
+    }
+  });
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(R * 1.22, 96), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.9 }));
+  rug.rotation.x = -Math.PI / 2;
+  rug.position.y = 0.004;
+  yurt.add(rug);
+
+  // кереге: перекрещенные рейки, проём под дверь
+  const doorA = Math.PI / 2, doorW = 0.24;
+  const inDoor = a => Math.abs(Math.atan2(Math.sin(a - doorA), Math.cos(a - doorA))) < doorW;
+  const KN = 64, span = ((Math.PI * 2) / KN) * 3;
+  const slats = [];
+  for (let i = 0; i < KN; i++) for (const sg of [1, -1]) {
+    const a1 = (i / KN) * Math.PI * 2, a2 = a1 + sg * span;
+    if (inDoor(a1) || inDoor(a2) || inDoor((a1 + a2) / 2)) continue;
+    const p1 = new THREE.Vector3(Math.cos(a1) * R, 0.02, Math.sin(a1) * R);
+    const dir = new THREE.Vector3(Math.cos(a2) * R, H, Math.sin(a2) * R).sub(p1);
+    slats.push({ p1, len: dir.length(), q: new THREE.Quaternion().setFromUnitVectors(up, dir.normalize()), order: i / KN });
+  }
+  const slatGeo = new THREE.CylinderGeometry(0.018, 0.018, 1, 6);
+  slatGeo.translate(0, 0.5, 0);
+  const kerege = new THREE.InstancedMesh(slatGeo, wood, slats.length);
+  kerege.frustumCulled = false;
+  yurt.add(kerege);
+  const rimTop = new THREE.Mesh(new THREE.TorusGeometry(R, 0.03, 8, 160), wood);
+  rimTop.rotation.x = Math.PI / 2;
+  rimTop.position.y = H;
+  yurt.add(rimTop);
+  const rimBot = rimTop.clone();
+  rimBot.position.y = 0.03;
+  yurt.add(rimBot);
+
+  // есік: двустворчатая дверь с орнаментом
+  const doorTex = canvasTexture(256, 512, (g, w, h) => {
+    g.fillStyle = '#c4291f';
+    g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#fec50c';
+    g.lineWidth = 10;
+    g.strokeRect(14, 14, w - 28, h - 28);
+    g.lineWidth = 3;
+    g.strokeRect(32, 32, w - 64, h - 64);
+    drawHorn(g, w / 2, h * 0.3, 150, '#f4eee2', 9);
+    drawHorn(g, w / 2, h * 0.7, 150, '#f4eee2', 9, Math.PI);
+  });
+  const doorG = new THREE.Group();
+  const dW = 2 * R * Math.sin(doorW) * 0.92, dH = H * 0.94;
+  doorG.position.set(Math.cos(doorA) * R, 0, Math.sin(doorA) * R);
+  doorG.rotation.y = Math.PI / 2 - doorA;
+  yurt.add(doorG);
+  const leafMat = new THREE.MeshStandardMaterial({ map: doorTex, roughness: 0.6 });
+  const leafL = new THREE.Mesh(new THREE.BoxGeometry(dW / 2, dH, 0.04), leafMat);
+  leafL.position.set(-dW / 4, dH / 2, 0);
+  const leafR = leafL.clone();
+  leafR.position.x = dW / 4;
+  doorG.add(leafL, leafR);
+  const post = new THREE.BoxGeometry(0.06, dH + 0.06, 0.08);
+  [-1, 1].forEach(sg => {
+    const m = new THREE.Mesh(post, gold);
+    m.position.set(sg * (dW / 2 + 0.03), dH / 2, 0);
+    doorG.add(m);
+  });
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(dW + 0.14, 0.07, 0.08), gold);
+  lintel.position.y = dH + 0.03;
+  doorG.add(lintel);
+
+  // уықтар: изогнутые жерди от стены к шаңыраку
+  const UN = 64;
+  const poleCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(0, 0, 0), new THREE.Vector3((ringR - R) * 0.35, (roofTop - H) * 0.62, 0), new THREE.Vector3(ringR - R, roofTop - H, 0));
+  const uyks = new THREE.InstancedMesh(new THREE.TubeGeometry(poleCurve, 16, 0.022, 6, false), woodLight, UN);
+  uyks.frustumCulled = false;
+  yurt.add(uyks);
+  const poleQ = [], polePos = [];
+  for (let j = 0; j < UN; j++) {
+    const a = (j / UN) * Math.PI * 2;
+    poleQ.push(new THREE.Quaternion().setFromAxisAngle(up, -a));
+    polePos.push(new THREE.Vector3(Math.cos(a) * R, H, Math.sin(a) * R));
+  }
+
+  // шаңырақ
+  const shan = buildCrown(gold, ringR);
+  yurt.add(shan);
+  const beam = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: radialTexture([[0, 'rgba(255,214,140,0.9)'], [0.4, 'rgba(254,197,12,0.25)'], [1, 'rgba(254,197,12,0)']]),
+    blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, toneMapped: false, opacity: 0
+  }));
+  beam.scale.set(2.6, 2.6, 1);
+  beam.position.y = 0.25;
+  shan.add(beam);
+
+  // киіз: войлок с вырезом, через который виден каркас
+  const cutC = doorA + 1.6, cutW = 1.75;
+  const arc = (a0, a1, make) => make(Math.PI / 2 - a1, a1 - a0);
+  const wallRanges = [[doorA + doorW, cutC - cutW / 2], [cutC + cutW / 2, doorA - doorW + Math.PI * 2]];
+  const feltParts = [], bands = [];
+  wallRanges.forEach(([a0, a1]) => arc(a0, a1, (ts, tl) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.04, R + 0.04, H, 64, 1, true, ts, tl), felt);
+    m.position.y = H / 2;
+    yurt.add(m);
+    feltParts.push(m);
+  }));
+  const roofPts = [];
+  for (let i = 0; i <= 20; i++) {
+    const q = poleCurve.getPoint(i / 20);
+    roofPts.push(new THREE.Vector2(R + q.x + 0.05, H + q.y + 0.035));
+  }
+  arc(cutC + cutW / 2, cutC - cutW / 2 + Math.PI * 2, (ts, tl) => {
+    const m = new THREE.Mesh(new THREE.LatheGeometry(roofPts, 120, ts, tl), felt);
+    yurt.add(m);
+    feltParts.push(m);
+  });
+  // басқұр: лента с орнаментом поверх войлока
+  const bandTex = canvasTexture(512, 128, (g, w, h) => {
+    g.fillStyle = '#c4291f';
+    g.fillRect(0, 0, w, h);
+    g.fillStyle = '#fec50c';
+    g.fillRect(0, 10, w, 6);
+    g.fillRect(0, h - 16, w, 6);
+    for (let i = 0; i < 4; i++) drawHorn(g, 64 + i * 128, h / 2 + 2, 84, i % 2 ? '#00afca' : '#f4eee2', 8, i % 2 ? Math.PI : 0);
+  });
+  wallRanges.forEach(([a0, a1]) => arc(a0, a1, (ts, tl) => {
+    const tex = bandTex.clone();
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.repeat.x = Math.max(1, Math.round((tl * R) / 1.04));
+    tex.needsUpdate = true;
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.055, R + 0.055, 0.26, 64, 1, true, ts, tl), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.7, side: THREE.DoubleSide, transparent: true }));
+    m.position.y = H - 0.17;
+    yurt.add(m);
+    bands.push(m);
+  }));
+
+  // тёплый свет внутри и золотая пыль вокруг
+  const warm = new THREE.PointLight(0xffa955, 0, 9, 1.6);
+  warm.position.set(0, 0.9, 0);
+  yurt.add(warm);
+  const dustN = small ? 70 : 140, dp = new Float32Array(dustN * 3);
+  for (let i = 0; i < dustN; i++) {
+    const a = Math.random() * Math.PI * 2, r = 2.2 + Math.random() * 2.6;
+    dp[i * 3] = Math.cos(a) * r;
+    dp[i * 3 + 1] = Math.random() * 4;
+    dp[i * 3 + 2] = Math.sin(a) * r;
+  }
+  const dustGeo = new THREE.BufferGeometry();
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ size: 0.06, color: 0xfec50c, map: radialTexture([[0, 'rgba(255,255,255,1)'], [1, 'rgba(255,255,255,0)']]), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.8 }));
+  yurt.add(dust);
+
+  // Сборка по прогрессу p: ковёр → кереге → дверь → уықтар → шаңырақ → войлок → свет
+  const seg = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+  const eo = k => 1 - Math.pow(1 - k, 3);
+  const eb = k => (k <= 0 ? 0 : 1 + 2.7 * Math.pow(k - 1, 3) + 1.7 * Math.pow(k - 1, 2));
+  const m4 = new THREE.Matrix4(), sc = new THREE.Vector3(), tiny = 0.0001;
+  const assemble = p => {
+    const r = eo(seg(p, 0, 0.12));
+    rug.scale.setScalar(Math.max(tiny, 0.3 + r * 0.7));
+    slats.forEach((sl, i) => {
+      const k = eo(seg(p, 0.08 + sl.order * 0.18, 0.2 + sl.order * 0.18));
+      sc.set(1, Math.max(tiny, k * sl.len), 1);
+      kerege.setMatrixAt(i, m4.compose(sl.p1, sl.q, sc));
+    });
+    kerege.instanceMatrix.needsUpdate = true;
+    rimBot.visible = r > 0.6;
+    rimTop.visible = p > 0.3;
+    doorG.scale.set(1, Math.max(tiny, eb(seg(p, 0.28, 0.38))), 1);
+    for (let j = 0; j < UN; j++) {
+      const k = eo(seg(p, 0.36 + (j / UN) * 0.18, 0.46 + (j / UN) * 0.18));
+      sc.setScalar(Math.max(tiny, k));
+      uyks.setMatrixAt(j, m4.compose(polePos[j], poleQ[j], sc));
+    }
+    uyks.instanceMatrix.needsUpdate = true;
+    const sk = seg(p, 0.6, 0.72);
+    shan.visible = sk > 0;
+    shan.position.y = roofTop + (1 - eo(sk)) * 2.4;
+    shan.rotation.y = (1 - sk) * 2.4;
+    const fk = seg(p, 0.76, 0.9), grow = 1 + (1 - eo(fk)) * 0.05;
+    felt.opacity = fk;
+    felt.depthWrite = fk > 0.98;
+    feltParts.forEach(m => { m.visible = fk > 0.01; m.scale.set(grow, 1, grow); });
+    const bk = seg(p, 0.84, 0.94);
+    bands.forEach(m => { m.visible = bk > 0.01; m.material.opacity = bk; });
+    const lk = seg(p, 0.9, 1);
+    warm.intensity = lk * 16;
+    beam.material.opacity = lk * 0.7;
+  };
+
+  const D = 12;
+  let scl = 1;
+  const layout = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    const halfH = D * Math.tan(THREE.MathUtils.degToRad(15)), halfW = halfH * camera.aspect;
+    scl = Math.min(1.15, (halfW * 1.85) / 6.6, halfH / 2.2);
+  };
+  new ResizeObserver(layout).observe(stage);
+  layout();
+
+  const timer = new THREE.Timer();
+  timer.connect(document);
+  let pS = window.__yurt ? window.__yurt.p : 1, lastP = -1, mx = 0, tmx = 0;
+  stage.addEventListener('pointermove', e => { const b = stage.getBoundingClientRect(); tmx = (e.clientX - b.left) / b.width - 0.5; }, { passive: true });
+  stage.addEventListener('pointerleave', () => { tmx = 0; });
+  const frame = () => {
+    timer.update();
+    const t = timer.getElapsed(), dt = Math.min(timer.getDelta(), 0.05);
+    const target = window.__yurt ? window.__yurt.p : 1;
+    // к цели плавно, и с той же скоростью при смене цели на полпути
+    pS += (target - pS) * (reduce ? 1 : Math.min(1, dt * 2.2));
+    if (Math.abs(pS - lastP) > 0.0002) { assemble(pS); lastP = pS; }
+    mx += (tmx - mx) * 0.05;
+    const el = THREE.MathUtils.lerp(0.62, 0.32, eo(pS));
+    camera.position.set(0, 1 + Math.sin(el) * D, Math.cos(el) * D);
+    camera.lookAt(0, 1.05, 0);
+    yurt.scale.setScalar(scl);
+    yurt.rotation.y = -0.9 + pS * 1.9 + (reduce ? 0 : Math.sin(t * 0.25) * 0.22) + mx * 0.6;
+    const arr = dust.geometry.attributes.position.array;
+    for (let i = 1; i < arr.length; i += 3) { arr[i] += dt * 0.18; if (arr[i] > 4) arr[i] = 0; }
+    dust.geometry.attributes.position.needsUpdate = true;
+    renderer.render(scene, camera);
+  };
+  assemble(pS);
+  lastP = pS;
+  startScene(stage, renderer, scene, camera, frame);
+}
+
+whenNear(document.querySelector('.hero__crown'), initCrown);
+whenNear(document.querySelector('.yurt__stage'), initYurt);
+</script>
+</body>
+</html>
